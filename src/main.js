@@ -27,7 +27,7 @@ let meowSoundCount = 0;
 let innerHeight = window.innerHeight;
 let innerWidth = window.innerWidth;
 
-let isMobile = innerWidth < 600;
+let isMobile = innerWidth < 600 || "ontouchstart" in document.documentElement;
 
 let lottieLoaded = false;
 
@@ -256,11 +256,15 @@ window.addEventListener("resize", function () {
   innerWidth = window.innerWidth;
   innerHeight = window.innerHeight;
 
-  isMobile = innerWidth < 600;
+  isMobile = innerWidth < 600 || "ontouchstart" in document.documentElement;
 
   if (isMobile) {
     errorOffset = 30;
   }
+
+  console.log({
+    isMobile,
+  });
 
   init();
 });
