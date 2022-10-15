@@ -18,11 +18,18 @@ const meow = require("./sound/meow.mp3");
 const meow2 = require("./sound/meow2.mp3");
 const meow3 = require("./sound/meow3.mp3");
 
+let errorOffset = 20;
+
 let clickCount = 0;
 let pawsCount = 0;
 let meowSoundCount = 0;
 
-document.addEventListener("DOMContentLoaded", init, false);
+let innerHeight = window.innerHeight;
+let innerWidth = window.innerWidth;
+
+let isMobile = innerWidth < 600;
+
+let lottieLoaded = false;
 
 const meowSound = [
   new Howl({
@@ -67,15 +74,18 @@ function getXAndY(e) {
   return { x, y };
 }
 
+function plusOrMinus() {
+  return Math.random() < 0.5 ? -1 : 1;
+}
+
 function randomNumber(min, max) {
   return Math.random() * (max - min) + min;
 }
 
 function randomMove({ button, originalHeight, originalWidth, PADDING }) {
-  const randomTop =
-    Math.random() * window.innerHeight - originalHeight - PADDING;
+  const randomTop = Math.random() * innerHeight - originalHeight - PADDING;
   const randomLeft = Math.abs(
-    Math.random() * window.innerWidth - originalWidth - PADDING
+    Math.random() * innerWidth - originalWidth - PADDING
   );
 
   button.style.top = randomTop + "px";
@@ -109,18 +119,45 @@ function handlePaws({ x, y }) {
   const arm = document.createElement("div");
 
   let randomRotate;
-  const windowWidth = window.innerWidth;
+  const windowWidth = innerWidth;
+  const windowHeight = innerHeight;
+  const currentX = x + plusOrMinus() * errorOffset;
+  const currentY = y + plusOrMinus() * errorOffset;
+
   arm.classList.add("arm");
 
-  if (x > windowWidth / 2) {
-    // console.log("right");
-    randomRotate = randomNumber(180, 360);
+  // if (x > windowWidth / 2) {
+  //   // console.log("right");
+  //   randomRotate = randomNumber(180, 360);
+  // } else {
+  //   // console.log("left");
+  //   randomRotate = randomNumber(0, 180);
+  // }
+
+  if (currentX < windowWidth / 2 && currentY < windowHeight / 2) {
+    // Top left
+    // console.log("Top Left");
+    randomRotate = randomNumber(90, 180);
+  } else if (currentX > windowWidth / 2 && currentY < windowHeight / 2) {
+    // Top Right
+    // console.log("Top Right");
+    randomRotate = randomNumber(180, 270);
+  } else if (currentX < windowWidth / 2 && currentY > windowHeight / 2) {
+    // Bottom Left
+    // console.log("Bottom Left");
+    randomRotate = randomNumber(0, 90);
   } else {
-    // console.log("left");
-    randomRotate = randomNumber(0, 180);
+    // Bottom Right
+    // console.log("Bottom Right");
+    randomRotate = randomNumber(270, 360);
   }
 
-  arm.style.left = x - windowWidth / 2 / 2 + "px";
+  if (isMobile) {
+    arm.style.left = x - windowWidth / 2 / 3 + "px"; // 30vw
+  } else {
+    arm.style.left = x - windowWidth / 2 / 2 + "px"; // 50vw
+  }
+
   arm.style.top = y + "px";
   arm.style.rotate = randomRotate + "deg";
   arm.style.background = `url(${pawsArr[pawsCount]}) center top / contain no-repeat`;
@@ -151,12 +188,22 @@ function loadLottie() {
   });
 
   animation.setSpeed(0.8);
+
+  lottieLoaded = true;
+}
+
+function handleEvent(e) {
+  handlePaws(getXAndY(e));
 }
 
 function init() {
   const PADDING = 20;
   const button = document.querySelector(".no");
   const body = document.body;
+
+  // Reset
+  window.removeEventListener("click", handleEvent);
+  window.removeEventListener("touchstart", handleEvent);
 
   if (button) {
     const originalWidth = button.getBoundingClientRect().width;
@@ -192,13 +239,28 @@ function init() {
     });
   }
 
-  window.addEventListener("click", function (e) {
-    handlePaws(getXAndY(e));
-  });
+  if (isMobile) {
+    window.addEventListener("touchstart", handleEvent);
+  } else {
+    window.addEventListener("click", handleEvent);
+  }
 
-  window.addEventListener("touchstart", function (e) {
-    handlePaws(getXAndY(e));
-  });
-
-  loadLottie();
+  if (!lottieLoaded) {
+    loadLottie();
+  }
 }
+
+document.addEventListener("DOMContentLoaded", init, false);
+
+window.addEventListener("resize", function () {
+  innerWidth = window.innerWidth;
+  innerHeight = window.innerHeight;
+
+  isMobile = innerWidth < 600;
+
+  if (isMobile) {
+    errorOffset = 30;
+  }
+
+  init();
+});
