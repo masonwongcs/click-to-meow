@@ -15,10 +15,38 @@ body {
   height: 100vh;
   //background: linear-gradient(180deg, #ffa8a8, #b54de0);
   background: linear-gradient(180deg, #34394c, #c2c2de);
-  font-family: 'Varela Round', sans-serif;
+  font-family: "Varela Round", sans-serif;
   pointer-events: none;
   margin: 0;
   overflow: hidden;
+}
+
+@keyframes scaleIn {
+  from {
+    transform: translateX(-50%) scale(1.1);
+    opacity: 0.5;
+  }
+  to {
+    transform: translateX(-50%) scale(1);
+    opacity: 1;
+  }
+}
+
+.count {
+  padding: 12px 20px;
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.2);
+  color: #fff;
+  font-size: 40px;
+  border-radius: 12px;
+  font-weight: bold;
+  animation: scaleIn 200ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  &:empty {
+    display: none;
+  }
 }
 
 .title {
@@ -58,7 +86,8 @@ body {
 }
 
 @keyframes catHand {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(100%);
     opacity: 0;
   }
@@ -88,14 +117,14 @@ body {
   cursor: pointer;
   //position: relative;
   font-weight: bold;
-  background-color: #34394C;
+  background-color: #34394c;
   border: 0;
   outline: none;
   border-radius: 8px;
   color: #fff;
   padding: 14px 20px;
   text-transform: uppercase;
-  font-family: 'Varela Round', sans-serif;
+  font-family: "Varela Round", sans-serif;
   margin: 0 10px;
   //transition: all 400ms cubic-bezier(0.4, 0, 0.2, 1);
   //top: 50%;

@@ -18,6 +18,7 @@ const meow = require("./sound/meow.mp3");
 const meow2 = require("./sound/meow2.mp3");
 const meow3 = require("./sound/meow3.mp3");
 
+let clickCount = 0;
 let pawsCount = 0;
 let meowSoundCount = 0;
 
@@ -82,6 +83,19 @@ function randomMove({ button, originalHeight, originalWidth, PADDING }) {
   button.style.width = originalWidth + "px";
 }
 
+function handleClick() {
+  clickCount += 1;
+
+  const countDOM = document.querySelector(".count");
+  countDOM.classList.add("count");
+  countDOM.innerHTML = clickCount;
+
+  if (countDOM) {
+    const clone = countDOM.cloneNode(true);
+    countDOM.replaceWith(clone);
+  }
+}
+
 function handlePaws({ x, y }) {
   pawsCount += 1;
   meowSoundCount += 1;
@@ -99,10 +113,10 @@ function handlePaws({ x, y }) {
   arm.classList.add("arm");
 
   if (x > windowWidth / 2) {
-    console.log("right");
+    // console.log("right");
     randomRotate = randomNumber(180, 360);
   } else {
-    console.log("left");
+    // console.log("left");
     randomRotate = randomNumber(0, 180);
   }
 
@@ -122,6 +136,8 @@ function handlePaws({ x, y }) {
   arm.addEventListener("animationend", function () {
     arm.remove();
   });
+
+  handleClick();
 }
 
 function loadLottie() {
